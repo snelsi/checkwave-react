@@ -1,24 +1,48 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useMemo, useEffect } from "react";
+
+import { useWave } from "useWave";
+import { useWindowSize } from "useWindowSize";
+
+const toKey = (x: number, y: number) => `${x}-${y}`;
 
 function App() {
+  const { width } = useWindowSize();
+  const size = useMemo(() => {
+    if (!width) return 20;
+    const count = Math.round((width - 40) / 32);
+    if (count > 20) return 20;
+    if (count < 4) return 4;
+    return count;
+  }, [width]);
+  const gridStyles = useMemo(
+    () => ({
+      "--size": size,
+    }),
+    [size],
+  ) as React.CSSProperties;
+
+  const [cells, { startWave }] = useWave(size);
+
+  useEffect(() => {
+    setTimeout(() => startWave(0, 0), 400);
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div className="grid" style={gridStyles}>
+        {cells.map((row, y) =>
+          row.map((checked, x) => (
+            <label key={toKey(x, y)}>
+              <input
+                type="checkbox"
+                checked={checked}
+                data-checked={checked}
+                onChange={() => startWave(x, y)}
+              />
+            </label>
+          )),
+        )}
+      </div>
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import React, { useMemo, useEffect } from "react";
+import { GithubLink } from "GithubLink";
 
 import { useWave } from "useWave";
 import { useWindowSize } from "useWindowSize";
@@ -29,6 +30,7 @@ function App() {
 
   return (
     <div className="App">
+      <GithubLink />
       <div className="grid" style={gridStyles}>
         {cells.map((row, y) =>
           row.map((checked, x) => (
